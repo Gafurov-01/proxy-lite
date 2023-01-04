@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db_proxylite
+    image: 'postgres:14.5-alpine'
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - db-proxilite:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+volumes:
+  db-proxilite:
