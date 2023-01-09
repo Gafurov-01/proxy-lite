@@ -1,10 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator'
-
-export enum Subnet {
-  TwentyNine = 29,
-  ThirtyTwo = 32,
-  FortyEight = 48,
-}
+import { Subnet } from 'src/tariff/tariff.entity'
 
 export class BuyKeyDto {
   @IsNotEmpty()

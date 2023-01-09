@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module'
 import { getDbConfig } from './config/db.config'
 import { UserModule } from './user/user.module'
 import { PaymentModule } from './payment/payment.module';
+import { TariffModule } from './tariff/tariff.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PaymentModule } from './payment/payment.module';
     AuthModule,
     UserModule,
     PaymentModule,
+    TariffModule,
   ],
 })
 export class AppModule {}
