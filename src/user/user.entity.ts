@@ -2,6 +2,12 @@ import { PaymentEntity } from 'src/payment/payment.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, Entity, OneToMany } from 'typeorm'
 
+export enum Roles {
+  ADMIN = 'admin',
+  PARTNER = 'partner',
+  USER = 'user',
+}
+
 @Entity('users')
 export class UserEntity extends BaseEntity {
   @Column()
@@ -10,8 +16,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'int64', default: 0 })
   balance: number
 
+  @Column({ type: 'enum', enum: Roles, default: Roles.USER })
+  role: Roles
+
   @Column({ type: 'boolean', default: false })
-  isAdmin: boolean
+  isBlocked: boolean
 
   @Column({ type: 'boolean', default: false })
   isEmailConfirmed: boolean

@@ -3,15 +3,14 @@ import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
 export enum PaymentType {
-  ADDITION = 'addition',
-  DEBIT = 'debit',
+  PURCHASE = 'purchase',
   REFUND = 'refund',
 }
 
 export enum PaymentStatus {
-  SUCCESS = 'success',
+  SUCCEEDED = 'succeeded',
   PENDING = 'pending',
-  ERROR = 'error',
+  CANCELED = 'canceled',
 }
 
 @Entity('payments')
@@ -20,7 +19,10 @@ export class PaymentEntity extends BaseEntity {
   paymentType: PaymentType
 
   @Column({ type: 'int64' })
-  count: number
+  value: number
+
+  @Column()
+  currency: string
 
   @Column()
   method: string
@@ -28,7 +30,12 @@ export class PaymentEntity extends BaseEntity {
   @Column()
   tariff: string
 
-  @Column({ type: 'enum', enum: PaymentStatus, name: 'payment_status' })
+  @Column({
+    type: 'enum',
+    enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
+    name: 'payment_status',
+  })
   status: PaymentStatus
 
   @Column({ nullable: true })
