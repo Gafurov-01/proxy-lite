@@ -10,6 +10,9 @@ export enum Subnet {
 @Entity('tariff')
 export class TariffEntity extends BaseEntity {
   @Column()
+  typeProxy: string
+
+  @Column()
   name: string
 
   @Column({ type: 'int64' })
@@ -20,4 +23,7 @@ export class TariffEntity extends BaseEntity {
 
   @Column({ type: 'enum', enum: Subnet })
   subnet: Subnet
+
+  @Column({ type: 'int64' })
+  price: number
 }

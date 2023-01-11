@@ -1,6 +1,8 @@
+import { OrderEntity } from 'src/order/order.entity'
 import { UserEntity } from 'src/user/user.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { MethodType } from './methods/payment-method.entity'
 
 export enum PaymentType {
   PURCHASE = 'purchase',
@@ -15,20 +17,16 @@ export enum PaymentStatus {
 
 @Entity('payments')
 export class PaymentEntity extends BaseEntity {
-  @Column({ type: 'enum', enum: PaymentType, name: 'payment_type' })
+  @Column({
+    type: 'enum',
+    enum: PaymentType,
+    default: PaymentType.PURCHASE,
+    name: 'payment_type',
+  })
   paymentType: PaymentType
 
-  @Column({ type: 'int64' })
-  value: number
-
   @Column()
-  currency: string
-
-  @Column()
-  method: string
-
-  @Column()
-  tariff: string
+  method: MethodType
 
   @Column({
     type: 'enum',
@@ -44,4 +42,8 @@ export class PaymentEntity extends BaseEntity {
   @ManyToOne(() => UserEntity, (user) => user.payments)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
+
+  @OneToOne(() => OrderEntity, (order) => order.payment)
+  @JoinColumn({ name: 'order_id' })
+  order: OrderEntity
 }

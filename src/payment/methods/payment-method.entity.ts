@@ -6,6 +6,7 @@ export enum MethodType {
   BANK_CARD = 'Банковские карты',
   E_WALLET = 'Электронные кошельки',
   CRYPTO = 'Криптовалюты',
+  MY_BALANCE = 'Мой баланс',
 }
 
 @Entity('payment_methods')

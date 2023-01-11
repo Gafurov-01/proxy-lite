@@ -1,3 +1,4 @@
+import { OrderEntity } from 'src/order/order.entity'
 import { PaymentEntity } from 'src/payment/payment.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, Entity, OneToMany } from 'typeorm'
@@ -27,4 +28,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => PaymentEntity, (payment) => payment.user)
   payments: PaymentEntity[]
+
+  @OneToMany(() => OrderEntity, (order) => order.user)
+  orders: OrderEntity[]
 }

@@ -4,9 +4,11 @@ import { ConfigService } from '@nestjs/config/dist'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module'
 import { getDbConfig } from './config/db.config'
+import { CurrencyModule } from './currency/currency.module'
+import { OrderModule } from './order/order.module'
+import { PaymentModule } from './payment/payment.module'
+import { TariffModule } from './tariff/tariff.module'
 import { UserModule } from './user/user.module'
-import { PaymentModule } from './payment/payment.module';
-import { TariffModule } from './tariff/tariff.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { TariffModule } from './tariff/tariff.module';
     UserModule,
     PaymentModule,
     TariffModule,
+    OrderModule,
+    CurrencyModule,
   ],
 })
 export class AppModule {}
