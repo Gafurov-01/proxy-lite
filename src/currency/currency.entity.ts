@@ -6,7 +6,7 @@ export class CurrencyEntity extends BaseEntity {
   @Column()
   name: string
 
-  @Column({ type: 'int64' })
+  @Column({ type: 'decimal' })
   currencyRate: number
 
   @Column()
