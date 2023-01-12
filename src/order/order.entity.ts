@@ -1,8 +1,7 @@
-import { PaymentEntity } from 'src/payment/payment.entity'
 import { Subnet } from 'src/tariff/tariff.entity'
 import { UserEntity } from 'src/user/user.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
-import { Column, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { Column, JoinColumn, ManyToOne } from 'typeorm'
 
 export class OrderEntity extends BaseEntity {
   @Column()
@@ -27,15 +26,15 @@ export class OrderEntity extends BaseEntity {
   ttlSec: number
 
   @Column({ type: 'int64' })
-  price: number
+  amount: number
 
   @Column({ default: 'RUB' })
   currency: string
 
-  @ManyToOne(() => UserEntity, (user) => user.orders)
+  @Column({ type: 'boolean', default: false })
+  isBought: boolean
+
+  @ManyToOne(() => UserEntity, (user) => user.orders, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
-
-  @OneToOne(() => PaymentEntity, (payment) => payment.order, { nullable: true })
-  payment?: PaymentEntity
 }

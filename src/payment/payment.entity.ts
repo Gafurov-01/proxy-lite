@@ -39,11 +39,11 @@ export class PaymentEntity extends BaseEntity {
   @Column({ nullable: true })
   description?: string
 
-  @ManyToOne(() => UserEntity, (user) => user.payments)
+  @ManyToOne(() => UserEntity, (user) => user.payments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
 
-  @OneToOne(() => OrderEntity, (order) => order.payment)
+  @OneToOne(() => OrderEntity)
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity
 }

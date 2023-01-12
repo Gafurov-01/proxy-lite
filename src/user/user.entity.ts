@@ -26,9 +26,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   isEmailConfirmed: boolean
 
-  @OneToMany(() => PaymentEntity, (payment) => payment.user)
+  @OneToMany(() => PaymentEntity, (payment) => payment.user, {
+    onDelete: 'SET NULL',
+  })
   payments: PaymentEntity[]
 
-  @OneToMany(() => OrderEntity, (order) => order.user)
+  @OneToMany(() => OrderEntity, (order) => order.user, { onDelete: 'SET NULL' })
   orders: OrderEntity[]
 }
