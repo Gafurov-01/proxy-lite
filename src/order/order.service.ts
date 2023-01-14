@@ -17,14 +17,8 @@ export class OrderService {
 
   public async createOrder(createOrderDto: CreateOrderDto, user: UserEntity) {
     const newOrder = await this.orderRepository.create({
-      typeProxy: createOrderDto.typeProxy,
-      nameProxy: createOrderDto.nameProxy,
-      threadLimit: createOrderDto.threadLimit,
-      rotatePeriodSec: createOrderDto.rotatePeriodSec,
-      subnet: createOrderDto.subnet,
-      country: createOrderDto.country,
-      ttlSec: createOrderDto.ttlSec,
-      amount: createOrderDto.amount,
+      ...createOrderDto,
+      user: user,
     })
 
     return await this.orderRepository.save(newOrder)

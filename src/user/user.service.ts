@@ -19,7 +19,7 @@ export class UserService {
     return await this.userRepository.save(newUser)
   }
 
-  public async markEmailAsConfirmed(id: number) {
+  public async markEmailAsConfirmed(id: string) {
     const user = await this.getById(id)
     user.isEmailConfirmed = true
     await this.userRepository.save(user)
@@ -31,7 +31,7 @@ export class UserService {
     return await this.userRepository.findOneBy({ email })
   }
 
-  public async getById(id: number) {
+  public async getById(id: string) {
     return await this.userRepository.findOneBy({ id })
   }
 }

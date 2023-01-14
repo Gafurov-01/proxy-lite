@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
-import { TariffService } from './tariff.service';
-import { TariffController } from './tariff.controller';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { TariffController } from './tariff.controller'
+import { TariffEntity } from './tariff.entity'
+import { TariffService } from './tariff.service'
 
 @Module({
+  imports: [TypeOrmModule.forFeature([TariffEntity])],
   controllers: [TariffController],
-  providers: [TariffService]
+  providers: [TariffService],
 })
 export class TariffModule {}

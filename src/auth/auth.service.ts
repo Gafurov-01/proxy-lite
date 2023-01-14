@@ -72,7 +72,7 @@ export class AuthService {
   private async sendEmailConfirmation(to: string, text: string) {
     await this.mailService.sendMail({
       to: to,
-      from: 'amirtimur987@mail.ru',
+      from: this.configService.get('USER_EMAIL'),
       subject: 'ПОДТВЕРДИТЕ СВОЮ ПОЧТУ!',
       text: text,
     })
