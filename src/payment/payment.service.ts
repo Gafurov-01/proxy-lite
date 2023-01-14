@@ -31,7 +31,7 @@ export class PaymentService {
       method: createPaymentDto.method,
       user: user,
       order: order,
-      description: `${user.email}, хотите купить тариф ${order.nameProxy} на сайте https://proxy-lite.com`,
+      description: `Ваша почта:${user.email}. Ваш тариф:${order.nameProxy} за ${order.amount}. На сайте https://proxy-lite.com`,
     })
     await this.paymentRepository.save(newPayment)
 
