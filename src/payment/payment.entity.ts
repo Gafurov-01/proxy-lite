@@ -39,11 +39,20 @@ export class PaymentEntity extends BaseEntity {
   @Column({ nullable: true })
   description?: string
 
-  @ManyToOne(() => UserEntity, (user) => user.payments, { onDelete: 'CASCADE' })
+  @Column({ name: 'aggregator_operation_id', nullable: true })
+  aggregatorOperationId?: number
+
+  @Column({ name: 'psycho_shark_key', nullable: true })
+  psychoSharkKey?: string
+
+  @ManyToOne(() => UserEntity, (user) => user.payments, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
 
-  @OneToOne(() => OrderEntity)
+  @OneToOne(() => OrderEntity, { eager: true, cascade: true })
   @JoinColumn({ name: 'order_id' })
   order: OrderEntity
 }

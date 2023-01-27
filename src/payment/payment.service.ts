@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { forwardRef } from '@nestjs/common/utils'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { OrderService } from 'src/order/order.service'
@@ -16,6 +17,7 @@ export class PaymentService {
     @InjectRepository(PaymentEntity)
     private readonly paymentRepository: Repository<PaymentEntity>,
     private readonly orderService: OrderService,
+    @Inject(forwardRef(() => PaymentAggregatorService))
     private readonly paymentAggregatorService: PaymentAggregatorService,
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
@@ -42,6 +44,14 @@ export class PaymentService {
       this.configService,
       newPayment,
     )
+  }
+
+  public async getById(id: string) {
+    return await this.paymentRepository.findOneBy({ id })
+  }
+
+  public async save(payment: PaymentEntity) {
+    await this.paymentRepository.save(payment)
   }
 
   private async getAggregator(method: MethodType) {

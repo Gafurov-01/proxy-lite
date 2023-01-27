@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import { PaymentAggregator } from '../aggregators/payment-aggregator.entity'
+import { PaymentAggregatorEntity } from '../aggregators/payment-aggregator.entity'
 
 export enum MethodType {
   BANK_CARD = 'Банковские карты',
@@ -10,7 +10,7 @@ export enum MethodType {
 }
 
 @Entity('payment_methods')
-export class PaymentMethod extends BaseEntity {
+export class PaymentMethodEntity extends BaseEntity {
   @Column()
   name: string
 
@@ -18,9 +18,9 @@ export class PaymentMethod extends BaseEntity {
   type: MethodType
 
   @ManyToOne(
-    () => PaymentAggregator,
+    () => PaymentAggregatorEntity,
     (paymentAggregator) => paymentAggregator.paymentMethods,
   )
   @JoinColumn({ name: 'payment_aggregator_id' })
-  paymentAggregator: PaymentAggregator
+  paymentAggregator: PaymentAggregatorEntity
 }
