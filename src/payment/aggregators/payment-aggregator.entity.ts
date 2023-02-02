@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { ConfigService } from '@nestjs/config'
 import { md5 } from 'md5'
+import { base64encode } from 'nodejs-base64'
 import { firstValueFrom } from 'rxjs'
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, Entity, OneToMany } from 'typeorm'
@@ -77,12 +78,12 @@ export class PaymentAggregatorEntity extends BaseEntity {
         httpService.post(
           configService.get('CRYPTOMUS_API_URL'),
           {
-            amount: payment.order.amount,
+            amount: Number(payment.order.amount.toFixed()),
             currency: payment.order.currency,
-            order_id: payment.order.id,
+            order_id: payment.id,
             url_callback:
               'https://proxy-lite.com/api/payment-aggregator/cryptomus',
-            url_return: 'Ссылка на фронт',
+            url_return: configService.get('SUCCESS_URL_AFTER_PAYMENT'),
             is_payment_multiple: false,
             currencies: [
               {
@@ -103,7 +104,7 @@ export class PaymentAggregatorEntity extends BaseEntity {
           },
           {
             headers: {
-              sign: 'ПОДПИСЬ',
+              sign: this.signHeader(payment, configService),
               merchant: configService.get('CRYPTOMUS_MERCHANT_ID'),
             },
           },
@@ -114,5 +115,38 @@ export class PaymentAggregatorEntity extends BaseEntity {
         redirectUrl: data.result.url,
       }
     }
+  }
+
+  private signHeader(payment: PaymentEntity, configService: ConfigService) {
+    return md5(
+      base64encode(
+        JSON.stringify({
+          amount: payment.order.amount,
+          currency: payment.order.currency,
+          order_id: payment.order.id,
+          url_callback:
+            'https://proxy-lite.com/api/payment-aggregator/cryptomus',
+          url_return: configService.get('SUCCESS_URL_AFTER_PAYMENT'),
+          is_payment_multiple: false,
+          currencies: [
+            {
+              currency: 'USDT',
+              network: 'tron_trc20',
+            },
+            {
+              currency: 'USDT',
+              network: 'eth_erc20',
+            },
+            {
+              currency: 'BTC',
+            },
+            {
+              currency: 'BCH',
+            },
+          ],
+        }),
+      ),
+      +configService.get('CRYPTOMUS_API_PAYMENT_KEY'),
+    )
   }
 }

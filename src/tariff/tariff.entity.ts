@@ -7,10 +7,23 @@ export enum Subnet {
   FortyEight = 48,
 }
 
+export enum ProxyType {
+  IPV6 = 'ipv6',
+  IPV4 = 'ipv4',
+}
+
+export enum SubProxyType {
+  Rotation = 'Ротация',
+  Static = 'Статичный',
+}
+
 @Entity('tariff')
 export class TariffEntity extends BaseEntity {
-  @Column()
-  typeProxy: string
+  @Column({ type: 'enum', enum: ProxyType })
+  proxyType: ProxyType
+
+  @Column({ type: 'enum', enum: SubProxyType })
+  subProxyType: SubProxyType
 
   @Column()
   name: string
