@@ -66,8 +66,8 @@ export class PsychoSharkService {
         ).isBought = true
 
         await this.paymentService.save(payment)
-        await this.cashboxService.printCheck(payment)
       }
+      await this.cashboxService.printCheck(payment)
     } catch (error) {
       payment.status = PaymentStatus.CANCELED
       payment.aggregatorOperationId =
