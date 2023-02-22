@@ -34,4 +34,8 @@ export class UserService {
   public async getById(id: string) {
     return await this.userRepository.findOneBy({ id })
   }
+
+  public async save(user: UserEntity) {
+    await this.userRepository.save(user)
+  }
 }

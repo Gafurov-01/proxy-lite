@@ -32,23 +32,25 @@ export class PaymentAggregatorEntity extends BaseEntity {
   ) {
     if (this.name === AggregatorName.PAY_ANY_WAY) {
       const MNT_SIGNATURE = md5(
-        `${configService.get('MNT_ID')} ${payment.id} ${payment.order.amount} ${
-          payment.order.currency
-        } ${payment.user.email} 0 ${configService.get('MNT_INTEGRITY_CODE')}`,
+        `${configService.get('MNT_ID')} ${payment.id} ${payment.orders.reduce(
+          (accumulator, order) => accumulator + order.amount,
+          0,
+        )} ${payment.orders[0].currency} ${
+          payment.user.email
+        } 0 ${configService.get('MNT_INTEGRITY_CODE')}`,
       )
 
       return {
         redirectUrl: `${configService.get(
           'PAYANYWAY_API_URL',
-        )}?MNT_ID=${configService.get('MNT_ID')}&MNT_AMOUNT=${Number(
-          payment.order.amount.toFixed(),
-        )}&MNT_TRANSACTION_ID=${payment.id}&MNT_CURRENCY_CODE=${
-          payment.order.currency
-        }&MNT_TEST_MODE=0&MNT_DESCRIPTION=${
-          payment.description
-        }&MNT_SUBSCRIBER_ID=${
-          payment.user.email
-        }&MNT_SUCCESS_URL=${configService.get(
+        )}?MNT_ID=${configService.get('MNT_ID')}&MNT_AMOUNT=${payment.orders
+          .reduce((accumulator, order) => accumulator + order.amount, 0)
+          .toFixed()}&MNT_TRANSACTION_ID=${payment.id}&MNT_CURRENCY_CODE=${
+          payment.orders[0].currency
+        }&MNT_TEST_MODE=0&MNT_DESCRIPTION=Покупка на сайте https://proxy-lite.com
+         &MNT_SUBSCRIBER_ID=${
+           payment.user.email
+         }&MNT_SUCCESS_URL=${configService.get(
           'SUCCESS_URL_AFTER_PAYMENT',
         )}&paymentSystem.unitId=${payment.method}&paymentSystem.limitIds=${
           payment.method
@@ -60,12 +62,14 @@ export class PaymentAggregatorEntity extends BaseEntity {
           params: {
             paymentType: payment.method,
             account: payment.id,
-            sum: Number(payment.order.amount.toFixed()),
+            sum: payment.orders
+              .reduce((accumulator, order) => accumulator + order.amount, 0)
+              .toFixed(),
             projectId: configService.get('PROJECT_ID'),
             resultUrl: configService.get('SUCCESS_URL_AFTER_PAYMENT'),
-            desc: payment.description,
+            desc: 'Покупка на сайте https://proxy-lite.com',
             secretKey: configService.get('SECRET_KEY'),
-            currency: payment.order.currency,
+            currency: payment.orders[0].currency,
           },
         }),
       )
@@ -78,8 +82,10 @@ export class PaymentAggregatorEntity extends BaseEntity {
         httpService.post(
           configService.get('CRYPTOMUS_API_URL'),
           {
-            amount: Number(payment.order.amount.toFixed()),
-            currency: payment.order.currency,
+            amount: payment.orders
+              .reduce((accumulator, order) => accumulator + order.amount, 0)
+              .toFixed(),
+            currency: payment.orders[0].currency,
             order_id: payment.id,
             url_callback:
               'https://proxy-lite.com/api/payment-aggregator/cryptomus',
@@ -121,9 +127,12 @@ export class PaymentAggregatorEntity extends BaseEntity {
     return md5(
       base64encode(
         JSON.stringify({
-          amount: payment.order.amount,
-          currency: payment.order.currency,
-          order_id: payment.order.id,
+          amount: payment.orders.reduce(
+            (accumulator, order) => accumulator + order.amount,
+            0,
+          ),
+          currency: payment.orders[0].currency,
+          order_id: payment.id,
           url_callback:
             'https://proxy-lite.com/api/payment-aggregator/cryptomus',
           url_return: configService.get('SUCCESS_URL_AFTER_PAYMENT'),

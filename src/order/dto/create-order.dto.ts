@@ -1,27 +1,29 @@
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator'
+import { IsEnum, IsNumber, IsOptional } from 'class-validator'
 import { Subnet } from 'src/tariff/tariff.entity'
 
 export class CreateOrderDto {
-  @IsNotEmpty()
-  typeProxy: string
+  @IsOptional()
+  typeProxy?: string
 
-  @IsNotEmpty()
-  nameProxy: string
+  @IsOptional()
+  nameProxy?: string
 
-  @IsNumber()
-  threadLimit: number
+  @IsOptional()
+  threadLimit?: number
 
-  @IsNumber()
-  rotatePeriodSec: number
+  @IsOptional()
+  rotatePeriodSec?: number
 
   @IsEnum(Subnet)
-  subnet: Subnet
+  @IsOptional()
+  subnet?: Subnet
 
-  @IsNotEmpty()
-  country: string
+  @IsOptional()
+  country?: string
 
   @IsNumber()
-  ttlSec: number
+  @IsOptional()
+  ttlSec?: number
 
   @IsNumber()
   amount: number

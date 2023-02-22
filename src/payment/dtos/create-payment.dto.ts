@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator'
+import { IsArray, IsEnum, IsUUID } from 'class-validator'
 import { MethodType } from '../methods/payment-method.entity'
 
 export class CreatePaymentDto {
@@ -6,6 +6,6 @@ export class CreatePaymentDto {
   method: MethodType
 
   @IsUUID()
-  @IsNotEmpty()
-  orderId: string
+  @IsArray({ each: true })
+  orderIds: string[]
 }

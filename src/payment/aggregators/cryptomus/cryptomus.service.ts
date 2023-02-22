@@ -1,6 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common'
-import { MethodType } from 'src/payment/methods/payment-method.entity'
-import { PaymentStatus } from 'src/payment/payment.entity'
 import { PaymentService } from 'src/payment/payment.service'
 import { PsychoSharkService } from 'src/psycho-shark/psycho-shark.service'
 import { CryptomusNotificationParams } from './notification-params.cryptomus'
@@ -20,13 +18,8 @@ export class CryptomusService {
       notificationParams.order_id,
     )
 
-    if (payment.method !== MethodType.MY_BALANCE) {
+    if (!payment.isReplenishment) {
       await this.psychoSharkService.usePsychoSharkApi(payment)
-    } else {
-      payment.user.balance = +notificationParams.payment_amount_usd
-      payment.status = PaymentStatus.SUCCEEDED
-      payment.order.isBought = true
-      await this.paymentService.save(payment)
     }
   }
 }

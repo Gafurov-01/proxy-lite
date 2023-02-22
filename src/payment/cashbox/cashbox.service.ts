@@ -24,19 +24,20 @@ export class CashboxService {
           c_num: randomUUID(),
           author: 'Аксенов Артем Иванович',
           smsEmail54FZ: payment.user.email,
-          goods: [
-            {
-              name: `${payment.order.nameProxy}`,
-              price: payment.order.amount,
-              count: 1,
-              sum: payment.order.amount,
-              payment_mode: 4,
-              item_type: 10,
-              nds_value: 0,
-              nds_not_apply: true,
-            },
-          ],
-          payed_cashless: payment.order.amount,
+          goods: payment.orders.map((order) => ({
+            name: order.nameProxy ? order.nameProxy : 'Пополнение баланса',
+            price: order.amount,
+            count: 1,
+            sum: order.amount,
+            payment_mode: 4,
+            item_type: 10,
+            nds_value: 0,
+            nds_not_apply: true,
+          })),
+          payed_cashless: payment.orders.reduce(
+            (accumulator, order) => accumulator + order.amount,
+            0,
+          ),
         },
         nonce: randomUUID(),
         token: await this.getNewToken(),
@@ -51,7 +52,7 @@ export class CashboxService {
         }),
       )
     } catch (error) {
-      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException('Cashbox error', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

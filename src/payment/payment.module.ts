@@ -4,6 +4,7 @@ import { forwardRef } from '@nestjs/common/utils'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { OrderModule } from 'src/order/order.module'
+import { UserModule } from 'src/user/user.module'
 import { PaymentAggregatorModule } from './aggregators/payment.aggregator.module'
 import { PaymentController } from './payment.controller'
 import { PaymentEntity } from './payment.entity'
@@ -16,6 +17,7 @@ import { PaymentService } from './payment.service'
     ConfigModule,
     OrderModule,
     forwardRef(() => PaymentAggregatorModule),
+    UserModule,
   ],
   controllers: [PaymentController],
   providers: [PaymentService],

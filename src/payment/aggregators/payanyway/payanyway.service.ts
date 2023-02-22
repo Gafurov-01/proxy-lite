@@ -1,5 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common'
-import { MethodType } from 'src/payment/methods/payment-method.entity'
 import { PaymentStatus } from 'src/payment/payment.entity'
 import { PaymentService } from 'src/payment/payment.service'
 import { PsychoSharkService } from 'src/psycho-shark/psycho-shark.service'
@@ -18,7 +17,7 @@ export class PayAnyWayService {
       notificationParams.MNT_TRANSACTION_ID,
     )
 
-    if (payment.method !== MethodType.MY_BALANCE) {
+    if (!payment.isReplenishment) {
       await this.psychoSharkService.usePsychoSharkApi(
         payment,
         notificationParams.MNT_OPERATION_ID,
@@ -26,8 +25,8 @@ export class PayAnyWayService {
     } else {
       payment.user.balance = notificationParams.MNT_AMOUNT
       payment.status = PaymentStatus.SUCCEEDED
-      payment.order.isBought = true
       payment.aggregatorOperationId = notificationParams.MNT_OPERATION_ID
+      payment.orders[0].isBought = true
       await this.paymentService.save(payment)
     }
   }

@@ -1,9 +1,10 @@
-import { IsNotEmpty } from 'class-validator'
+import { IsArray, IsNotEmpty, IsUUID } from 'class-validator'
 
 export class ChangeOrderCurrencyDto {
   @IsNotEmpty()
   currencyName: string
 
-  @IsNotEmpty()
-  orderId: string
+  @IsUUID()
+  @IsArray({ each: true })
+  orderIds: string[]
 }

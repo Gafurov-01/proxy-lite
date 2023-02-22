@@ -14,5 +14,6 @@ import { CashboxService } from './cashbox.service'
     ConfigModule,
   ],
   providers: [CashboxService],
+  exports: [CashboxService],
 })
 export class CashboxModule {}

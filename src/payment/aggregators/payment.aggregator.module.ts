@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { getPsychoSharkHttpConfig } from 'src/config/psycho-shark.http-options'
 import { PsychoSharkService } from 'src/psycho-shark/psycho-shark.service'
+import { CashboxModule } from '../cashbox/cashbox.module'
 import { PaymentModule } from '../payment.module'
 import { PayAnyWayService } from './payanyway/payanyway.service'
 import { PaymentAggregatorController } from './payment-aggregator.controller'
@@ -21,6 +22,7 @@ import { UnitPayService } from './unitpay/unitpay.service'
       useFactory: getPsychoSharkHttpConfig,
     }),
     forwardRef(() => PaymentModule),
+    CashboxModule,
   ],
   controllers: [PaymentAggregatorController],
   providers: [
@@ -29,6 +31,6 @@ import { UnitPayService } from './unitpay/unitpay.service'
     UnitPayService,
     PsychoSharkService,
   ],
-  exports: [PaymentAggregatorService],
+  exports: [PaymentAggregatorService, PsychoSharkService],
 })
 export class PaymentAggregatorModule {}

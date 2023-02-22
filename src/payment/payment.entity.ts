@@ -1,7 +1,7 @@
 import { OrderEntity } from 'src/order/order.entity'
 import { UserEntity } from 'src/user/user.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 import { MethodType } from './methods/payment-method.entity'
 
 export enum PaymentType {
@@ -45,6 +45,9 @@ export class PaymentEntity extends BaseEntity {
   @Column({ name: 'psycho_shark_key', nullable: true })
   psychoSharkKey?: string
 
+  @Column({ type: 'boolean', default: false })
+  isReplenishment: boolean
+
   @ManyToOne(() => UserEntity, (user) => user.payments, {
     onDelete: 'CASCADE',
     eager: true,
@@ -52,7 +55,9 @@ export class PaymentEntity extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
 
-  @OneToOne(() => OrderEntity, { eager: true, cascade: true })
-  @JoinColumn({ name: 'order_id' })
-  order: OrderEntity
+  @OneToMany(() => OrderEntity, (order) => order.payment, {
+    eager: true,
+    cascade: true,
+  })
+  orders: OrderEntity[]
 }
