@@ -42,9 +42,6 @@ export class PaymentEntity extends BaseEntity {
   @Column({ name: 'aggregator_operation_id', nullable: true })
   aggregatorOperationId?: number
 
-  @Column({ name: 'psycho_shark_key', nullable: true })
-  psychoSharkKey?: string
-
   @Column({ type: 'boolean', default: false })
   isReplenishment: boolean
 

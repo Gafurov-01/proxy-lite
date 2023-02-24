@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common'
+import { CashboxService } from 'src/payment/cashbox/cashbox.service'
 import { PaymentStatus } from 'src/payment/payment.entity'
 import { PaymentService } from 'src/payment/payment.service'
 import { PsychoSharkService } from 'src/psycho-shark/psycho-shark.service'
@@ -16,6 +17,7 @@ export class UnitPayService {
     @Inject(forwardRef(() => PaymentService))
     private readonly paymentService: PaymentService,
     private readonly psychoSharkService: PsychoSharkService,
+    private readonly cashboxService: CashboxService,
   ) {}
 
   public async handleNotification(notificationParams: QueryUnitPay) {
@@ -29,6 +31,7 @@ export class UnitPayService {
           payment,
           notificationParams.unitpayId,
         )
+        await this.cashboxService.printCheck(payment)
       } else if (notificationParams.method === 'error') {
         payment.status = PaymentStatus.CANCELED
         payment.aggregatorOperationId = notificationParams.unitpayId
@@ -45,6 +48,7 @@ export class UnitPayService {
       payment.orders[0].isBought = true
       payment.aggregatorOperationId = notificationParams.unitpayId
       await this.paymentService.save(payment)
+      await this.cashboxService.printCheck(payment)
     }
   }
 }

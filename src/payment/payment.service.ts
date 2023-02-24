@@ -29,7 +29,7 @@ export class PaymentService {
     private readonly userService: UserService,
   ) {}
 
-  public async buyOrder(createPaymentDto: CreatePaymentDto, user: UserEntity) {
+  public async buyOrders(createPaymentDto: CreatePaymentDto, user: UserEntity) {
     const orders = await this.orderService.getByIds(createPaymentDto.orderIds)
 
     const newPayment = await this.paymentRepository.create({

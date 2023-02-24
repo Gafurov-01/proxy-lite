@@ -4,6 +4,15 @@ import { UserEntity } from 'src/user/user.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, JoinColumn, ManyToOne } from 'typeorm'
 
+export enum Country {
+  NETHERLAND = 'Нидерланды',
+  BRAZIL = 'Бразилия',
+  FRANCE = 'Франция',
+  USA = 'Сша',
+  INDIA = 'Индия',
+  RUSSIA = 'Россия',
+}
+
 export class OrderEntity extends BaseEntity {
   @Column({ nullable: true })
   typeProxy?: string
@@ -20,11 +29,14 @@ export class OrderEntity extends BaseEntity {
   @Column({ type: 'enum', enum: Subnet, nullable: true })
   subnet?: Subnet
 
-  @Column({ nullable: true })
-  country?: string
+  @Column({ type: 'enum', enum: Country, nullable: true })
+  country?: Country
 
   @Column({ type: 'int64', nullable: true })
   ttlSec?: number
+
+  @Column({ name: 'psycho_shark_key', nullable: true })
+  psychoSharkKey?: string
 
   @Column({ type: 'int64' })
   amount: number

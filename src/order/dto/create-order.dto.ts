@@ -1,5 +1,6 @@
 import { IsEnum, IsNumber, IsOptional } from 'class-validator'
 import { Subnet } from 'src/tariff/tariff.entity'
+import { Country } from '../order.entity'
 
 export class CreateOrderDto {
   @IsOptional()
@@ -19,7 +20,8 @@ export class CreateOrderDto {
   subnet?: Subnet
 
   @IsOptional()
-  country?: string
+  @IsEnum(Country)
+  country?: Country
 
   @IsNumber()
   @IsOptional()

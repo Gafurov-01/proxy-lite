@@ -15,6 +15,7 @@ export class OrderController {
 
   @HttpCode(HttpStatus.OK)
   @Post()
+  @Auth()
   public async createOrder(
     @Body() createOrderDto: CreateOrderDto,
     @CurrentUser() user: UserEntity,
@@ -24,6 +25,7 @@ export class OrderController {
 
   @HttpCode(HttpStatus.OK)
   @Patch()
+  @Auth()
   public async changeCurrency(
     @Body() changeOrderCurrencyDto: ChangeOrderCurrencyDto,
   ) {

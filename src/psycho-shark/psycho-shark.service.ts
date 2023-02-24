@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios'
 import { forwardRef, HttpException, HttpStatus, Inject } from '@nestjs/common'
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator'
 import { firstValueFrom } from 'rxjs'
-import { CashboxService } from 'src/payment/cashbox/cashbox.service'
+import { Country } from 'src/order/order.entity'
 import { PaymentEntity, PaymentStatus } from 'src/payment/payment.entity'
 import { PaymentService } from 'src/payment/payment.service'
 
@@ -12,7 +12,6 @@ export class PsychoSharkService {
     @Inject(forwardRef(() => PaymentService))
     private readonly paymentService: PaymentService,
     private readonly httpService: HttpService,
-    private readonly cashboxService: CashboxService,
   ) {}
 
   public async usePsychoSharkApi(
@@ -27,7 +26,20 @@ export class PsychoSharkService {
             {},
             {
               params: {
-                serverTag: order.country,
+                serverTag:
+                  order.country === Country.BRAZIL
+                    ? 'NL-BRAZIL-1'
+                    : order.country === Country.FRANCE
+                    ? 'NL-FRANCE-1'
+                    : order.country === Country.INDIA
+                    ? 'NL-INDIA-1'
+                    : order.country === Country.NETHERLAND
+                    ? 'NL-AMS-1'
+                    : order.country === Country.RUSSIA
+                    ? 'RU-MSK-1'
+                    : order.country === Country.USA
+                    ? 'NL-USA-1'
+                    : '',
                 rotatePeriodSec: order.rotatePeriodSec,
                 allowedDestinations: [
                   '*recaptcha.ne',
@@ -57,17 +69,13 @@ export class PsychoSharkService {
           ),
         )
 
-        payment.status = PaymentStatus.SUCCEEDED
-        payment.psychoSharkKey = data.key
-        payment.aggregatorOperationId =
-          aggregatorOperationId && aggregatorOperationId
-        payment.orders.find(
-          (paymentOrder) => paymentOrder.id === order.id,
-        ).isBought = true
-
-        await this.paymentService.save(payment)
+        order.psychoSharkKey = data.key
+        order.isBought = true
       }
-      await this.cashboxService.printCheck(payment)
+      payment.status = PaymentStatus.SUCCEEDED
+      payment.aggregatorOperationId =
+        aggregatorOperationId && aggregatorOperationId
+      await this.paymentService.save(payment)
     } catch (error) {
       payment.status = PaymentStatus.CANCELED
       payment.aggregatorOperationId =

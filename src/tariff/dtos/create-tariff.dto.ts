@@ -1,9 +1,14 @@
 import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator'
-import { Subnet } from '../tariff.entity'
+import { ProxyType, Subnet, SubProxyType } from '../tariff.entity'
 
 export class CreateTariffDto {
   @IsNotEmpty()
-  typeProxy: string
+  @IsEnum(ProxyType)
+  typeProxy: ProxyType
+
+  @IsNotEmpty()
+  @IsEnum(SubProxyType)
+  subProxyType: SubProxyType
 
   @IsNotEmpty()
   name: string

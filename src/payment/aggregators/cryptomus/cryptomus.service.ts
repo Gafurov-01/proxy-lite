@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import { CashboxService } from 'src/payment/cashbox/cashbox.service'
 import { PaymentService } from 'src/payment/payment.service'
 import { PsychoSharkService } from 'src/psycho-shark/psycho-shark.service'
 import { CryptomusNotificationParams } from './notification-params.cryptomus'
@@ -9,6 +10,7 @@ export class CryptomusService {
     @Inject(forwardRef(() => PaymentService))
     private readonly paymentService: PaymentService,
     private readonly psychoSharkService: PsychoSharkService,
+    private readonly cashboxService: CashboxService,
   ) {}
 
   public async handleNotification(
@@ -20,6 +22,7 @@ export class CryptomusService {
 
     if (!payment.isReplenishment) {
       await this.psychoSharkService.usePsychoSharkApi(payment)
+      await this.cashboxService.printCheck(payment)
     }
   }
 }
