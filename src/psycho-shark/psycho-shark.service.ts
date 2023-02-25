@@ -14,7 +14,7 @@ export class PsychoSharkService {
     private readonly httpService: HttpService,
   ) {}
 
-  public async usePsychoSharkApi(
+  public async createKey(
     payment: PaymentEntity,
     aggregatorOperationId?: number,
   ) {
@@ -84,6 +84,18 @@ export class PsychoSharkService {
       throw new HttpException(
         'PsychoShark API behaved wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  public async removeKey(payment: PaymentEntity) {
+    for (let order of payment.orders) {
+      await firstValueFrom(
+        this.httpService.delete('/key', {
+          params: {
+            key: order.psychoSharkKey,
+          },
+        }),
       )
     }
   }

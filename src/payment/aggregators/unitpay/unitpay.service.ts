@@ -27,7 +27,7 @@ export class UnitPayService {
 
     if (!payment.isReplenishment) {
       if (notificationParams.method === 'pay') {
-        await this.psychoSharkService.usePsychoSharkApi(
+        await this.psychoSharkService.createKey(
           payment,
           notificationParams.unitpayId,
         )

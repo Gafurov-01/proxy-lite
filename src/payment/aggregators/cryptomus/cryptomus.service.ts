@@ -21,7 +21,7 @@ export class CryptomusService {
     )
 
     if (!payment.isReplenishment) {
-      await this.psychoSharkService.usePsychoSharkApi(payment)
+      await this.psychoSharkService.createKey(payment)
       await this.cashboxService.printCheck(payment)
     }
   }

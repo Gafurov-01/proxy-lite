@@ -1,5 +1,5 @@
 import { PaymentEntity } from 'src/payment/payment.entity'
-import { Subnet } from 'src/tariff/tariff.entity'
+import { ProxyType, Subnet, SubProxyType } from 'src/tariff/tariff.entity'
 import { UserEntity } from 'src/user/user.entity'
 import { BaseEntity } from 'src/utilities/base.entity'
 import { Column, JoinColumn, ManyToOne } from 'typeorm'
@@ -14,8 +14,11 @@ export enum Country {
 }
 
 export class OrderEntity extends BaseEntity {
-  @Column({ nullable: true })
-  typeProxy?: string
+  @Column({ type: 'enum', enum: ProxyType, nullable: true })
+  typeProxy?: ProxyType
+
+  @Column({ type: 'enum', enum: SubProxyType, nullable: true })
+  subProxyType?: SubProxyType
 
   @Column({ nullable: true })
   nameProxy?: string
@@ -39,7 +42,7 @@ export class OrderEntity extends BaseEntity {
   psychoSharkKey?: string
 
   @Column({ type: 'int64' })
-  amount: number
+  price: number
 
   @Column({ default: 'RUB' })
   currency: string

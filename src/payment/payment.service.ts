@@ -11,6 +11,7 @@ import { UserService } from 'src/user/user.service'
 import { Repository } from 'typeorm'
 import { PaymentAggregatorService } from './aggregators/payment-aggregator.service'
 import { CreatePaymentDto } from './dtos/create-payment.dto'
+import { RefundPaymentDto } from './dtos/refund-payment.dto'
 import { ReplenishBalanceDto } from './dtos/replenish-balance.dto'
 import { MethodType } from './methods/payment-method.entity'
 import { PaymentEntity } from './payment.entity'
@@ -43,14 +44,14 @@ export class PaymentService {
       const aggregator = await this.getAggregator(createPaymentDto.method)
 
       return await aggregator.createPayment(
+        newPayment,
         this.httpService,
         this.configService,
-        newPayment,
       )
     } else {
       if (user.balance >= this.orderService.getOrdersSum(orders)) {
         try {
-          await this.psychoSharkService.usePsychoSharkApi(newPayment)
+          await this.psychoSharkService.createKey(newPayment)
           user.balance -= this.orderService.getOrdersSum(orders)
           await this.userService.save(user)
         } catch (error) {
@@ -60,6 +61,20 @@ export class PaymentService {
         throw new ForbiddenException('Insufficient funds!')
       }
     }
+  }
+
+  public async refundPayment(refundPaymentDto: RefundPaymentDto) {
+    const payment = await this.getById(refundPaymentDto.paymentId)
+
+    const aggregator = await this.getAggregator(payment.method)
+    await aggregator.refundPayment(
+      payment,
+      this.httpService,
+      this.configService,
+    )
+    await this.psychoSharkService.removeKey(payment)
+
+    await this.paymentRepository.remove(payment)
   }
 
   public async replenishBalance(
@@ -83,9 +98,9 @@ export class PaymentService {
     const aggregator = await this.getAggregator(replenishBalanceDto.method)
 
     return await aggregator.createPayment(
+      newPayment,
       this.httpService,
       this.configService,
-      newPayment,
     )
   }
 

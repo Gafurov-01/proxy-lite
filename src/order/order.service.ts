@@ -31,8 +31,8 @@ export class OrderService {
     const orders = await this.getByIds(orderIds)
 
     for (let order of orders) {
-      order.amount = await this.currencyService.changeCurrency(
-        order.amount,
+      order.price = await this.currencyService.changeCurrency(
+        order.price,
         order.currency,
         currencyName,
       )
@@ -56,6 +56,6 @@ export class OrderService {
   }
 
   public getOrdersSum(orders: OrderEntity[]) {
-    return orders.reduce((accumulator, order) => accumulator + order.amount, 0)
+    return orders.reduce((accumulator, order) => accumulator + order.price, 0)
   }
 }

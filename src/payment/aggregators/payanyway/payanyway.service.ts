@@ -20,7 +20,7 @@ export class PayAnyWayService {
     )
 
     if (!payment.isReplenishment) {
-      await this.psychoSharkService.usePsychoSharkApi(
+      await this.psychoSharkService.createKey(
         payment,
         notificationParams.MNT_OPERATION_ID,
       )

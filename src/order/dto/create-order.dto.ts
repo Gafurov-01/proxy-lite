@@ -1,10 +1,13 @@
 import { IsEnum, IsNumber, IsOptional } from 'class-validator'
-import { Subnet } from 'src/tariff/tariff.entity'
+import { ProxyType, Subnet, SubProxyType } from 'src/tariff/tariff.entity'
 import { Country } from '../order.entity'
 
 export class CreateOrderDto {
   @IsOptional()
-  typeProxy?: string
+  typeProxy?: ProxyType
+
+  @IsOptional()
+  subProxyType?: SubProxyType
 
   @IsOptional()
   nameProxy?: string

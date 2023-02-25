@@ -1,4 +1,5 @@
 import { HttpService } from '@nestjs/axios'
+import { HttpException, HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { md5 } from 'md5'
 import { base64encode } from 'nodejs-base64'
@@ -26,14 +27,14 @@ export class PaymentAggregatorEntity extends BaseEntity {
   paymentMethods: PaymentMethodEntity[]
 
   public async createPayment(
+    payment: PaymentEntity,
     httpService: HttpService,
     configService: ConfigService,
-    payment: PaymentEntity,
   ) {
     if (this.name === AggregatorName.PAY_ANY_WAY) {
       const MNT_SIGNATURE = md5(
         `${configService.get('MNT_ID')} ${payment.id} ${payment.orders.reduce(
-          (accumulator, order) => accumulator + order.amount,
+          (accumulator, order) => accumulator + order.price,
           0,
         )} ${payment.orders[0].currency} ${
           payment.user.email
@@ -44,7 +45,7 @@ export class PaymentAggregatorEntity extends BaseEntity {
         redirectUrl: `${configService.get(
           'PAYANYWAY_API_URL',
         )}?MNT_ID=${configService.get('MNT_ID')}&MNT_AMOUNT=${payment.orders
-          .reduce((accumulator, order) => accumulator + order.amount, 0)
+          .reduce((accumulator, order) => accumulator + order.price, 0)
           .toFixed()}&MNT_TRANSACTION_ID=${payment.id}&MNT_CURRENCY_CODE=${
           payment.orders[0].currency
         }&MNT_TEST_MODE=0&MNT_DESCRIPTION=Покупка на сайте https://proxy-lite.com
@@ -63,7 +64,7 @@ export class PaymentAggregatorEntity extends BaseEntity {
             paymentType: payment.method,
             account: payment.id,
             sum: payment.orders
-              .reduce((accumulator, order) => accumulator + order.amount, 0)
+              .reduce((accumulator, order) => accumulator + order.price, 0)
               .toFixed(),
             projectId: configService.get('PROJECT_ID'),
             resultUrl: configService.get('SUCCESS_URL_AFTER_PAYMENT'),
@@ -83,7 +84,7 @@ export class PaymentAggregatorEntity extends BaseEntity {
           configService.get('CRYPTOMUS_API_URL'),
           {
             amount: payment.orders
-              .reduce((accumulator, order) => accumulator + order.amount, 0)
+              .reduce((accumulator, order) => accumulator + order.price, 0)
               .toFixed(),
             currency: payment.orders[0].currency,
             order_id: payment.id,
@@ -123,12 +124,39 @@ export class PaymentAggregatorEntity extends BaseEntity {
     }
   }
 
+  public async refundPayment(
+    payment: PaymentEntity,
+    httpService: HttpService,
+    configService: ConfigService,
+  ) {
+    if (this.name === AggregatorName.UNIT_PAY) {
+      try {
+        const { data } = await firstValueFrom(
+          httpService.get(configService.get('UNITPAY_API_URL'), {
+            params: {
+              method: 'refundPayment',
+              paymentMethod: 'full_payment',
+              sum: payment.orders.reduce(
+                (accumulator, order) => accumulator + order.price,
+                0,
+              ),
+              paymentId: payment.aggregatorOperationId,
+              secretKey: configService.get('SECRET_KEY'),
+            },
+          }),
+        )
+      } catch (error) {
+        throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR)
+      }
+    }
+  }
+
   private signHeader(payment: PaymentEntity, configService: ConfigService) {
     return md5(
       base64encode(
         JSON.stringify({
           amount: payment.orders.reduce(
-            (accumulator, order) => accumulator + order.amount,
+            (accumulator, order) => accumulator + order.price,
             0,
           ),
           currency: payment.orders[0].currency,
