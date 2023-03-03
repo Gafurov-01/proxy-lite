@@ -37,6 +37,9 @@ export class TariffEntity extends BaseEntity {
   @Column({ type: 'enum', enum: Subnet })
   subnet: Subnet
 
+  @Column()
+  currencyName: string
+
   @Column({ type: 'int64' })
   price: number
 }

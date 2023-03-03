@@ -83,7 +83,7 @@ export class PaymentService {
   ) {
     const newOrder = await this.orderService.createOrder(
       {
-        amount: replenishBalanceDto.amount,
+        price: replenishBalanceDto.amount,
       },
       user,
     )

@@ -23,6 +23,9 @@ export class CreateTariffDto {
   @IsEnum(Subnet)
   subnet: Subnet
 
+  @IsNotEmpty()
+  currencyName: string
+
   @IsNumber()
   price: number
 }

@@ -31,5 +31,5 @@ export class CreateOrderDto {
   ttlSec?: number
 
   @IsNumber()
-  amount: number
+  price: number
 }
